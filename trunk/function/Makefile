@@ -22,7 +22,9 @@ endif
 
 obj = safemalloc.o barrier.o allgather.o
 
-all: send.x put.x rput.x get.x rget.x rmw.x
+all: p2p coll
+p2p: send.x put.x rput.x get.x rget.x rmw.x
+coll: test-barrier.x test-bcast.x test-allreduce.x test-allgather.x
 
 %.o: %.c safemalloc.h coll.h preamble.h
 	$(CC) $(CFLAGS) -c $< -o $@
