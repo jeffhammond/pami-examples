@@ -1,3 +1,3 @@
 The multi-client test requires you to submit like this (assuming Cobalt scheduler):
 
-qsub -t 5 -n 1 --mode c1 --env PAMI_CLIENTS=CLIENT1,CLIENT2 ./clients.x 
+qsub -t 5 -n 1 --mode c1 --env PAMI_CLIENTS=CLIENT1,CLIENT2,CLIENT3 ./clients.x 
