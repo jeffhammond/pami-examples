@@ -16,7 +16,7 @@ LD      = $(CC)
 CFLAGS  = $(COPT) -I.
 LDFLAGS = $(COPT) -lpthread
 
-all: hello.x query.x clients.x
+all: hello.x query.x clients.x type1.x
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
