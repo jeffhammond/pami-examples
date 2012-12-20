@@ -13,7 +13,7 @@ ifeq ($(COMPILER),XL)
 endif
 
 LD      = $(CC)
-CFLAGS  = $(COPT) -I.
+CFLAGS  = $(COPT) -I. -I../include
 LDFLAGS = $(COPT) -lpthread
 
 ifdef PROGRESS
