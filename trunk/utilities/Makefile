@@ -13,7 +13,7 @@ ifeq	($(COMPILER),XL)
 endif
 
 LD      = $(CC)
-CFLAGS  = $(COPT) -I.
+CFLAGS  = $(COPT) -I. -I../include
 LDFLAGS = $(COPT) -lpthread
 
 all: hello.x query.x clients.x type1.x
@@ -21,8 +21,8 @@ all: hello.x query.x clients.x type1.x
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-%.x: %.o
-	$(LD) $(LDFLAGS) $< -o $@
+%.x: %.o safemalloc.o
+	$(LD) $(LDFLAGS) $< safemalloc.o -o $@
 
 clean:
 	$(RM) $(RMFLAGS) *.o
