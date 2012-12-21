@@ -10,6 +10,15 @@ int main(int argc, char* argv[])
 {
   pami_result_t result = PAMI_ERROR;
 
+  char * envvar = getenv("PAMI_CLIENTS");
+  if (envvar == NULL)
+  {
+    printf("You did not set the environment variable PAMI_CLIENTS. \n");
+    printf("Please set PAMI_CLIENTS=CLIENT1,CLIENT2,CLIENT3 so this test will work as designed. \n");
+    fflush(stdout);
+    exit(1);
+  }
+
   /* initialize the client1 */
   char * client1name = "";
   pami_client_t client1;
