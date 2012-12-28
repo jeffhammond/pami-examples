@@ -38,10 +38,8 @@ void dispatch_recv_cb(pami_context_t context,
   printf("dispatch_recv_cb: origin = (%ld,%ld) cookie = %d \n", task, ctxoff, *c);
 
   printf("dispatch_recv_cb: header_size = %ld \n", header_size);
-  //const char * h = header_addr;
-  //printf("dispatch_recv_cb: header_addr[] = %s \n", h);
-  const int * h = header_addr;
-  printf("dispatch_recv_cb: header_addr[] = %d \n", *h);
+  const long * h = header_addr;
+  printf("dispatch_recv_cb: header_addr[] = %ld \n", *h);
   fflush(stdout);
 
   if (pipe_addr!=NULL)
@@ -132,8 +130,8 @@ int main(int argc, char* argv[])
   /* create the endpoint */
   int target = (world_rank>0 ? world_rank-1 : world_size-1);
   pami_endpoint_t target_ep;
-  result = PAMI_Endpoint_create(client, (pami_task_t) target, 1, &target_ep);
   //result = PAMI_Endpoint_create(client, (pami_task_t) target, 0, &target_ep);
+  result = PAMI_Endpoint_create(client, (pami_task_t) target, 1, &target_ep);
   TEST_ASSERT(result == PAMI_SUCCESS,"PAMI_Endpoint_create");
 
   /* register the dispatch function */
@@ -142,7 +140,8 @@ int main(int argc, char* argv[])
   dispatch_cb.p2p                    = dispatch_recv_cb;
   pami_dispatch_hint_t dispatch_hint = {0};
   int dispatch_cookie                = 1000000+world_rank;
-  //dispatch_hint.recv_immediate       = PAMI_HINT_DISABLE;
+  /* setting this hint to "disable" will disable the pipe_addr!=NULL code path */
+  //dispatch_hint.recv_immediate       = PAMI_HINT_DISABLE; 
   result = PAMI_Dispatch_set(contexts[0], dispatch_id, dispatch_cb, &dispatch_cookie, dispatch_hint);
   result = PAMI_Dispatch_set(contexts[1], dispatch_id, dispatch_cb, &dispatch_cookie, dispatch_hint);
   TEST_ASSERT(result == PAMI_SUCCESS,"PAMI_Dispatch_set");

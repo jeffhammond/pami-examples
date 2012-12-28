@@ -16,9 +16,7 @@ LD      = $(CC)
 CFLAGS  = $(COPT) -I. -I../include
 LDFLAGS = $(COPT) -lpthread
 
-ifdef PROGRESS
-    CFLAGS += -DPROGRESS_THREAD
-endif
+CFLAGS += -DPROGRESS_THREAD
 
 obj = safemalloc.o barrier.o allgather.o
 
