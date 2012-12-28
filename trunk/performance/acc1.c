@@ -11,6 +11,8 @@
 #include "preamble.h"
 #include "coll.h"
 
+//#define DO_ACCUMULATE
+
 static void dispatch_recv_cb(pami_context_t context,
                              void * cookie,
                              const void * header_addr, size_t header_size,
@@ -23,7 +25,15 @@ static void dispatch_recv_cb(pami_context_t context,
 
   if (pipe_addr!=NULL)
   {
+#ifdef DO_ACCUMULATE
+    size_t count = data_size/sizeof(double);
+    double * target_data = *h;
+    const double * pipe_data = (const double *) pipe_addr;
+    for (size_t i=0; i<count; i++)
+      target_data[i] += pipe_data[i];
+#else
     memcpy(*h, pipe_addr, data_size);
+#endif
   }
   else
   {
@@ -32,7 +42,11 @@ static void dispatch_recv_cb(pami_context_t context,
     recv->addr        = *h;
     recv->type        = PAMI_TYPE_DOUBLE;
     recv->offset      = 0;
+#ifdef DO_ACCUMULATE
     recv->data_fn     = PAMI_DATA_SUM;
+#else
+    recv->data_fn     = PAMI_DATA_COPY;
+#endif
     recv->data_cookie = NULL;
   }
 
@@ -105,7 +119,11 @@ int main(int argc, char* argv[])
     size_t bytes = n * sizeof(double);
     double *  shared = (double *) safemalloc(bytes);
     for (int i=0; i<n; i++)
+#ifdef DO_ACCUMULATE
+      shared[i] = -10.0;
+#else
       shared[i] = 0.0;
+#endif
 
     double *  local  = (double *) safemalloc(bytes);
     for (int i=0; i<n; i++)
@@ -172,7 +190,11 @@ int main(int argc, char* argv[])
     
     target = (world_rank<(world_size-1) ? world_rank+1 : 0);
     for (int i=0; i<n; i++)
+#ifdef DO_ACCUMULATE
+      if (shared[i] != ((double)target-10.0))
+#else
       if (shared[i] != (double)target)
+#endif
          errors++;
 
     if (errors>0)
