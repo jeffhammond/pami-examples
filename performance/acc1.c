@@ -11,7 +11,12 @@
 #include "preamble.h"
 #include "coll.h"
 
-//#define DO_ACCUMULATE
+#define DO_ACCUMULATE
+
+typedef struct {
+  void * target_addr;
+  double scaling;
+} remote_acc_info_t;
 
 static void dispatch_recv_cb(pami_context_t context,
                              void * cookie,
@@ -21,25 +26,39 @@ static void dispatch_recv_cb(pami_context_t context,
                              pami_endpoint_t origin,
                              pami_recv_t * recv)
 {
-  void ** h = (void **)header_addr;
+  //old void ** h = (void **)header_addr;
+
+  if (sizeof(remote_acc_info_t) != header_size)
+    printf("something is wrong \n");
+
+  remote_acc_info_t * info = (remote_acc_info_t *) header_addr;
+
+  void * h = info->target_addr;
+  double s = info->scaling;
 
   if (pipe_addr!=NULL)
   {
 #ifdef DO_ACCUMULATE
     size_t count = data_size/sizeof(double);
-    double * target_data = *h;
+    //old double * target_data = *h;
+    double * target_data = h;
     const double * pipe_data = (const double *) pipe_addr;
     for (size_t i=0; i<count; i++)
-      target_data[i] += pipe_data[i];
+      target_data[i] += s*pipe_data[i];
 #else
-    memcpy(*h, pipe_addr, data_size);
+    //old memcpy(*h, pipe_addr, data_size);
+    memcpy(h, pipe_addr, data_size);
 #endif
   }
   else
   {
+    if (s != 1.0)
+      printf("not supported \n");
+
     recv->cookie      = 0;
     recv->local_fn    = NULL;
-    recv->addr        = *h;
+    //old recv->addr        = *h;
+    recv->addr        = h;
     recv->type        = PAMI_TYPE_DOUBLE;
     recv->offset      = 0;
 #ifdef DO_ACCUMULATE
@@ -144,8 +163,14 @@ int main(int argc, char* argv[])
 
     int active = 2;
     pami_send_t parameters;
-    parameters.send.header.iov_base = &(shptrs[target]);
-    parameters.send.header.iov_len  = sizeof(void *);
+
+    remote_acc_info_t info;
+    info.target_addr = &(shptrs[target]);
+    info.scaling     = 1.0;
+    parameters.send.header.iov_base = &info;
+    parameters.send.header.iov_len  = sizeof(remote_acc_info_t);
+    //old parameters.send.header.iov_base = &(shptrs[target]);
+    //old parameters.send.header.iov_len  = sizeof(void *);
     parameters.send.data.iov_base   = local;
     parameters.send.data.iov_len    = bytes;
     parameters.send.dispatch        = dispatch_id;
