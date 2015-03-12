@@ -3,8 +3,6 @@ This code is designed to demonstrate how to use PAMI.
 On Blue Gene/Q systems, all of the examples should build trivially 
 with "make -j16" in each subdirectory.
 
-Please direct all criticism at Jeff Hammond (jhammond@alcf.anl.gov).
-
 Consider signing up for the PAMI discussion list at 
 http://lists.alcf.anl.gov/mailman/listinfo/pami-discuss.
 
