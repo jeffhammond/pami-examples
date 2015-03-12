@@ -1,3 +1,5 @@
+# Overview
+
 This code is designed to demonstrate how to use PAMI.
 
 On Blue Gene/Q systems, all of the examples should build trivially 
@@ -6,7 +8,24 @@ with "make -j16" in each subdirectory.
 Consider signing up for the PAMI discussion list at 
 http://lists.alcf.anl.gov/mailman/listinfo/pami-discuss.
 
-Best,
+# Google Code Front Page
 
-Jeff
+PAMI is the successor to LAPI and DCMF that is being used on IBM Blue Gene/Q, IBM PERCS/POWER, and other IBM systems to implement MPI, Charm++, GASNet and other protocols.
 
+This repo includes example code for those who want to learn how to use PAMI.
+
+Argonne National Laboratory maintains an email list for discussing PAMI.
+
+The best documentation of PAMI is found in the pami.h header file that one must include to use it. The location of this file will vary from system to system; on Blue Gene/Q, it should be located in /bgsys/drivers/ppcfloor/comm/sys/include/.
+
+EPFL hosts PAMI Doxygen at https://bgq1.epfl.ch/navigator/resources/doc/pami/index.html.
+
+PAMI Programming Guide was the first publicly available documentation of the PAMI API. Please note that this document is about the AIX implementation of PAMI. This document was originally full of errors and still may not be correct in all cases. Please always verify syntax with pami.h on your system.
+
+# References
+
+http://publibfp.dhe.ibm.com/epubs/pdf/a2322733.pdf
+
+http://www.computer.org/csdl/proceedings/ipdps/2012/4675/00/4675a763-abs.html
+
+http://charm.cs.illinois.edu/newPapers/12-50/paper.pdf
